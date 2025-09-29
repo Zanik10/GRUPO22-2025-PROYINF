@@ -1,35 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import NavBar from './components/NavBar'
+import Dashboard from './pages/Dashboard'
+import User from './pages/User'
+import Simulator from './pages/Simulator'
+import StatusBadge from './components/StatusBadge'
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={{minHeight:'100vh',display:'grid',gridTemplateRows:'auto 1fr'}}>
+      <header style={{borderBottom:'1px solid #e5e7eb',background:'#0f172a',color:'#fff'}}>
+        <div style={{maxWidth:1040,margin:'0 auto',padding:'12px 16px',display:'flex',gap:16,alignItems:'center'}}>
+          <h1 style={{margin:0,fontSize:18}}>Préstamos — Banco</h1>
+          <StatusBadge />
+          <div style={{marginLeft:'auto'}} />
+          <NavBar />
+        </div>
+      </header>
+      <main style={{maxWidth:1040,margin:'0 auto',padding:'20px 16px'}}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/usuario" element={<User />} />
+          <Route path="/simulador" element={<Simulator />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+    </div>
   )
 }
+import { Routes, Route, Navigate } from 'react-router-dom'
+import NavBar from './components/NavBar'
+import Dashboard from './pages/Dashboard'
+import User from './pages/User'
+import Simulator from './pages/Simulator'
+import StatusBadge from './components/StatusBadge'
 
-export default App
+export default function App() {
+  return (
+    <div style={{minHeight:'100vh',display:'grid',gridTemplateRows:'auto 1fr'}}>
+      <header style={{borderBottom:'1px solid #e5e7eb',background:'#0f172a',color:'#fff'}}>
+        <div style={{maxWidth:1040,margin:'0 auto',padding:'12px 16px',display:'flex',gap:16,alignItems:'center'}}>
+          <h1 style={{margin:0,fontSize:18}}>Préstamos — Banco</h1>
+          <StatusBadge />
+          <div style={{marginLeft:'auto'}} />
+          <NavBar />
+        </div>
+      </header>
+      <main style={{maxWidth:1040,margin:'0 auto',padding:'20px 16px'}}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/usuario" element={<User />} />
+          <Route path="/simulador" element={<Simulator />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+    </div>
+  )
+}
