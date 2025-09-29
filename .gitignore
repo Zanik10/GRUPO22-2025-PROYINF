@@ -1,0 +1,17 @@
+# Node
+node_modules
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Builds
+apps/client/dist
+apps/desktop/dist
+apps/server/dist
+
+# Env
+.env
+.env.*
+
+# Docker
+pgdata

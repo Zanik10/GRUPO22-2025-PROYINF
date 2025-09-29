@@ -1,0 +1,18 @@
+{
+  "name": "prestamos-app",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n API,WEB,DESK -c green,magenta,yellow \"pnpm -C apps/server dev\" \"pnpm -C apps/client dev\" \"pnpm -C apps/desktop dev\"",
+    "build": "pnpm -C apps/client build && pnpm -C apps/server build && pnpm -C apps/desktop build",
+    "start": "pnpm -C apps/server start & pnpm -C apps/desktop start",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.0.0"
+  }
+}
