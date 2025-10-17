@@ -1,4 +1,3 @@
-tee apps/client/src/main.jsx >/dev/null <<'JS'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'

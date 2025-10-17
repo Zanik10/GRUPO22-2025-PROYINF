@@ -14,36 +14,84 @@ export default function Simulator() {
   }, [monto, tasa, meses])
 
   return (
-    <section>
-      <h2 style={{ fontSize:22, margin:'0 0 14px' }}>Simulador de Préstamos</h2>
+    <section
+      style={{
+        width: '100%', 
+        margin: '0 auto',       
+        padding: '32px 5%', 
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px',
+        minHeight: '100vh',
+        boxSizing: 'border-box'
+      }}
+    >
+    
+      <h2 style={{ fontSize: 26, margin: '0 0 14px', textAlign: 'center' }}>
+        Simulador de Préstamos
+      </h2>
 
-      <div style={{ display:'grid', gap:12, gridTemplateColumns:'repeat(3, minmax(0, 1fr))', maxWidth:820 }}>
+      <div
+        style={{
+          display: 'grid',
+          gap: 16,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        }}
+      >
         <Field label="Monto (CLP)">
-          <input type="number" value={monto} onChange={e => setMonto(e.target.value)} style={inputStyle} />
+          <input
+            type="number"
+            value={monto}
+            onChange={(e) => setMonto(e.target.value)}
+            style={inputStyle}
+          />
         </Field>
         <Field label="Tasa anual (%)">
-          <input type="number" step="0.01" value={tasa} onChange={e => setTasa(e.target.value)} style={inputStyle} />
+          <input
+            type="number"
+            step="0.01"
+            value={tasa}
+            onChange={(e) => setTasa(e.target.value)}
+            style={inputStyle}
+          />
         </Field>
         <Field label="Plazo (meses)">
-          <input type="number" value={meses} onChange={e => setMeses(e.target.value)} style={inputStyle} />
+          <input
+            type="number"
+            value={meses}
+            onChange={(e) => setMeses(e.target.value)}
+            style={inputStyle}
+          />
         </Field>
       </div>
 
-      <div style={{ marginTop:16, display:'flex', gap:16, flexWrap:'wrap' }}>
+      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
         <Stat label="Cuota estimada" value={`$${formatCLP(result.cuota)}`} />
         <Stat label="Interés total" value={`$${formatCLP(result.totalInteres)}`} />
         <Stat label="Cuotas" value={`${meses}`} />
       </div>
 
-      <div style={{ marginTop:16, overflow:'auto', border:'1px solid #e2e8f0', borderRadius:8 }}>
-        <table style={{ borderCollapse:'collapse', width:'100%' }}>
-          <thead style={{ background:'#f1f5f9' }}>
+      <div
+        style={{
+          marginTop: 16,
+          overflow: 'auto',
+          border: '1px solid #e2e8f0',
+          borderRadius: 8,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+        }}
+      >
+        <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 14 }}>
+          <thead style={{ background: '#f1f5f9' }}>
             <tr>
-              <Th>#</Th><Th>Cuota</Th><Th>Interés</Th><Th>Abono</Th><Th>Saldo</Th>
+              <Th>#</Th>
+              <Th>Cuota</Th>
+              <Th>Interés</Th>
+              <Th>Abono</Th>
+              <Th>Saldo</Th>
             </tr>
           </thead>
           <tbody>
-            {result.filas.slice(0, 120).map(row => (
+            {result.filas.slice(0, 120).map((row) => (
               <tr key={row.n}>
                 <Td>{row.n}</Td>
                 <Td>${formatCLP(row.cuota)}</Td>
@@ -55,7 +103,8 @@ export default function Simulator() {
           </tbody>
         </table>
       </div>
-      <p style={{ marginTop:8, color:'#64748b' }}>
+
+      <p style={{ color: '#64748b', textAlign: 'center' }}>
         Mostrando hasta 120 filas por simplicidad. (Luego lo podemos paginar/exportar.)
       </p>
     </section>
@@ -64,17 +113,31 @@ export default function Simulator() {
 
 function Field({ label, children }) {
   return (
-    <label style={{ display:'grid', gap:6 }}>
-      <span style={{ fontWeight:600 }}>{label}</span>
+    <label style={{ 
+      display: 'flex', 
+      flexDirection: 'column',
+      gap: 6,
+      width: '100%'
+    }}>
+      <span style={{ fontWeight: 600 }}>{label}</span>
       {children}
     </label>
   )
 }
+
 function Stat({ label, value }) {
   return (
-    <div style={{ padding:12, border:'1px solid #e2e8f0', borderRadius:12, minWidth:180, background:'#f8fafc' }}>
-      <div style={{ fontSize:12, color:'#64748b' }}>{label}</div>
-      <div style={{ fontSize:18, fontWeight:700 }}>{value}</div>
+    <div style={{ 
+      padding: 16,
+      border: '1px solid #e2e8f0', 
+      borderRadius: 12, 
+      minWidth: 200, 
+      background: '#f8fafc',
+      flex: '1 1 auto',
+      textAlign: 'center' 
+    }}>
+      <div style={{ fontSize: 12, color: '#64748b' }}>{label}</div>
+      <div style={{ fontSize: 18, fontWeight: 700, color: '#000000' }}>{value}</div>
     </div>
   )
 }
