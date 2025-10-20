@@ -14,7 +14,8 @@ Este es el repositorio del Grupo 22, cuyos integrantes son:
 ## Videos
 
 * [Video presentación cliente](https://aula.usm.cl/mod/resource/view.php?id=6926137)
-  
+
+* [Vídeo de funcionamiento inicial (Hito 3)](https://drive.google.com/file/d/1NELQ-d7_rtGUXQkWAq5OCmQmB7aNrxjV/view?usp=sharing)
 ## Aspectos técnicos relevantes
 
 Requisitos:
