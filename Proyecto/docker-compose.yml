@@ -1,18 +1,16 @@
-version: "3.9"
 services:
-  postgres:
+  db:
     image: postgres:16
-    container_name: prestamos-postgres
     environment:
-      POSTGRES_USER: loans
-      POSTGRES_PASSWORD: loans
-      POSTGRES_DB: loans_dev
+      POSTGRES_DB: proyinf
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5432:5432"     # si 5432 ya está usado, cambia a "5433:5432"
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./.data/postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U loans -d loans_dev"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d proyinf"]
       interval: 5s
-      timeout: 3s
+      timeout: 5s
       retries: 10

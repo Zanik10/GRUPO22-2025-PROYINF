@@ -5,6 +5,10 @@ import User from './pages/User'
 import Simulator from './pages/Simulator'
 import StatusBadge from './components/StatusBadge'
 
+// 👇 NUEVO: importa las páginas de auth
+import Register from './pages/Register'
+import Login from './pages/Login'
+
 export default function App() {
   return (
     <div style={{
@@ -46,6 +50,11 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/usuario" element={<User />} />
           <Route path="/simulador" element={<Simulator />} />
+
+          {/* 👇 NUEVO: rutas de autenticación */}
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login onLogin={() => (location.href = '/')} />} />
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

@@ -1,0 +1,75 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+}
+
+enum TransactionDirection {
+  CREDIT
+  DEBIT
+}
+
+enum LoanAppStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model User {
+  id           String            @id @default(uuid())
+  email        String            @unique
+  passwordHash String
+  fullName     String?
+  rut          String?
+  phone        String?
+  address      String?
+  role         String            @default("USER")
+  status       String            @default("ACTIVE")
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  accounts     Account[]
+  loanApps     LoanApplication[]
+}
+
+model Account {
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  type         AccountType   @default(CHECKING)
+  currency     String        @default("CLP")
+  createdAt    DateTime      @default(now())
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String               @id @default(uuid())
+  accountId   String
+  account     Account              @relation(fields: [accountId], references: [id])
+  direction   TransactionDirection
+  amount      Decimal              @db.Decimal(14, 2)
+  description String?
+  isBlocked   Boolean              @default(false)
+  createdAt   DateTime             @default(now())
+}
+
+model LoanApplication {
+  id              String        @id @default(uuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  amountRequested Decimal       @db.Decimal(14, 2)
+  termMonths      Int
+  status          LoanAppStatus @default(DRAFT)
+  decisionReason  String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
