@@ -13,7 +13,8 @@ export default function NavBar() {
     return (
         <nav style={{ display:'flex', gap:8 }}>
         <NavLink to="/" style={linkStyle}>Inicio</NavLink>
-        <NavLink to="/usuario" style={linkStyle}>Usuario</NavLink>
+        <NavLink to="/usuario" style={linkStyle}>Login</NavLink>
+        <NavLink to="/register" style={linkStyle}>Registro</NavLink>
         <NavLink to="/simulador" style={linkStyle}>Simulador</NavLink>
         </nav>
     )
