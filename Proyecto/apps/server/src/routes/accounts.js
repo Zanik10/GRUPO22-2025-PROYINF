@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
 import { authGuard } from "../helpers/auth.js";
 import { z } from "zod";
 

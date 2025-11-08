@@ -4,7 +4,7 @@ export default function StatusBadge() {
   const [status, setStatus] = useState({ api:false, db:false, loading:true })
 
   useEffect(() => {
-    const url = (import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/health'
+    const url = `${import.meta.env.VITE_API_URL}/api/health/db`;
     fetch(url)
       .then(r => r.json())
       .then(d => setStatus({ api: d.api === 'ok', db: !!d.db, loading:false }))

@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { z } from "zod";
 import argon2 from "argon2";
-import { PrismaClient } from "@prisma/client";
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
 import { signJWT } from "../helpers/auth.js";
 
 const prisma = new PrismaClient();
