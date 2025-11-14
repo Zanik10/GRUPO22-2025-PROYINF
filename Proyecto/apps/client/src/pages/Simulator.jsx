@@ -107,6 +107,22 @@ export default function Simulator() {
       <p style={{ color: '#64748b', textAlign: 'center' }}>
         Mostrando hasta 120 filas por simplicidad. (Luego lo podemos paginar/exportar.)
       </p>
+      <div style={{ textAlign: 'center', marginTop: 20 }}>
+        <button
+          onClick={() => window.location.href = "http://localhost:4000/api/loan/verify"}
+          style={{
+            padding: "12px 20px",
+            backgroundColor: "#3b82f6",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            fontSize: "16px",
+            cursor: "pointer"
+          }}
+        >
+          Solicitar Préstamo
+        </button>
+      </div>
     </section>
   )
 }

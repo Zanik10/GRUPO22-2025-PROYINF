@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import User from './pages/User'
 import Simulator from './pages/Simulator'
 import StatusBadge from './components/StatusBadge'
+import LoanVerify from "./pages/LoanVerify.jsx";
 
 // 👇 NUEVO: importa las páginas de auth
 import Register from './pages/Register'
@@ -54,7 +55,7 @@ export default function App() {
           {/* 👇 NUEVO: rutas de autenticación */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login onLogin={() => (location.href = '/')} />} />
-
+          <Route path="/loan/verify" element={<LoanVerify />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

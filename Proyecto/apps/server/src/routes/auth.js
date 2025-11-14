@@ -67,4 +67,17 @@ router.post("/logout", (_req, res) => {
   res.clearCookie("token").json({ ok: true });
 });
 
+router.get("/claveunica/callback", (req, res) => {
+  console.log("▶ Simulando retorno de ClaveÚnica (mock)");
+
+  const fakeUser = {
+    run: "12.345.678-9",
+    name: "Usuario de Pruebas",
+  };
+
+  return res.redirect(
+    `http://localhost:5173/loan/verify?run=${fakeUser.run}&name=${encodeURIComponent(fakeUser.name)}`
+  );
+});
+
 export default router;

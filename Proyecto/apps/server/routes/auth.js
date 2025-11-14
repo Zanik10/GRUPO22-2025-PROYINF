@@ -67,7 +67,7 @@ router.get("/claveunica/callback", async (req, res) => {
     res.cookie("token", token, { httpOnly: true });
 
     // 🔁 Redirige al dashboard si ya está registrado
-    res.redirect("http://localhost:5173/dashboard");
+    res.redirect("http://localhost:5173/loan/verify");
   } catch (err) {
     console.error("❌ Error autenticando ClaveÚnica:", err);
     res.status(500).json({ ok: false, error: "Error verificando identidad" });

@@ -3,12 +3,13 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import "dotenv/config";
 import health from "./routes/health.js";
-
+import loanRoutes from "./routes/loan.js";
 import authRoutes from "./routes/auth.js";
 import accountRoutes from "./routes/accounts.js";
 
 const app = express();
 
+app.use("/api/loan", loanRoutes);
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
