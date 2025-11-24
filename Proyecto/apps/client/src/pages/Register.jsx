@@ -23,7 +23,7 @@ export default function Register() {
     try {
       if (isClaveUnica) {
         await api("/api/auth/claveunica/register", { method: "POST", body: { run: params.get("run"), name: form.fullName, salario: form.salario } });
-        setMsg("✅ Registro completado con ClaveÚnica.");
+        setMsg("Registro completado con ClaveÚnica.");
       } else {
         await api("/api/auth/register", { method: "POST", body: form });
         setMsg("Cuenta creada. Ahora puedes ir al Dashboard.");

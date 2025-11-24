@@ -6,11 +6,40 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"     # si 5432 ya está usado, cambia a "5433:5432"
+      - "5432:5432"
     volumes:
-      - ./.data/postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d proyinf"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  server:
+    build:
+      context: ./apps/server
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/proyinf"
+      PORT: "3000"
+      CORS_ORIGIN: "http://localhost:5173"
+    ports:
+      - "3000:3000"
+
+  client:
+    build:
+      context: ./apps/client
+      dockerfile: Dockerfile
+    depends_on:
+      - server
+    environment:
+      VITE_API_URL: "http://localhost:3000"
+    ports:
+      - "5173:5173"
+
+volumes:
+  postgres_data:
+

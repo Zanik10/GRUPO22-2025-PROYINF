@@ -1,11 +1,10 @@
+import express from "express";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
-import express from "express";
+import { pool } from "../db.js";
 
 dotenv.config();
-const prisma = new PrismaClient();
 const router = express.Router();
 
 const CLAVEUNICA_BASE = "https://accounts.claveunica.gob.cl/openid";
@@ -16,18 +15,19 @@ const {
   JWT_SECRET = "supersecreto",
 } = process.env;
 
-// 1️⃣ Redirigir al login de ClaveÚnica
+
 router.get("/claveunica/login", (req, res) => {
   const authUrl = `${CLAVEUNICA_BASE}/authorize/?client_id=${CLAVEUNICA_CLIENT_ID}&response_type=code&scope=openid run name&redirect_uri=${CLAVEUNICA_REDIRECT_URI}`;
   res.redirect(authUrl);
 });
+
 
 router.get("/claveunica/callback", async (req, res) => {
   const { code } = req.query;
   if (!code) return res.status(400).json({ ok: false, error: "Falta código" });
 
   try {
-    // 1️⃣ Intercambiar el code por token
+    
     const tokenRes = await fetch(`${CLAVEUNICA_BASE}/token/`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -42,7 +42,7 @@ router.get("/claveunica/callback", async (req, res) => {
 
     const tokenData = await tokenRes.json();
 
-    // 2️⃣ Obtener los datos del usuario desde ClaveÚnica
+    
     const userRes = await fetch(`${CLAVEUNICA_BASE}/userinfo/`, {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
     });
@@ -52,44 +52,62 @@ router.get("/claveunica/callback", async (req, res) => {
     const run = userInfo.run;
     const name = userInfo.name?.fullName || "Usuario ClaveÚnica";
 
-    // 3️⃣ Verificar si el usuario ya existe
-    const user = await prisma.user.findUnique({ where: { rut: run } });
+    
+    const existing = await pool.query(
+      `SELECT id, rut FROM usuarios WHERE rut = $1`,
+      [run]
+    );
 
-    if (!user) {
-      // 🚀 4️⃣ Usuario nuevo → redirigimos al frontend para completar registro
+    if (existing.rows.length === 0) {
+      
       return res.redirect(
-        `http://localhost:5173/register?run=${run}&name=${encodeURIComponent(name)}&claveunica=true`
+        `http://localhost:5173/register?run=${run}&name=${encodeURIComponent(
+          name
+        )}&claveunica=true`
       );
     }
 
-    // 5️⃣ Usuario existente → autenticación normal
-    const token = jwt.sign({ id: user.id, rut: user.rut }, JWT_SECRET, { expiresIn: "2h" });
+    const user = existing.rows[0];
+
+    
+    const token = jwt.sign(
+      { id: user.id, rut: user.rut },
+      JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+
     res.cookie("token", token, { httpOnly: true });
 
-    // 🔁 Redirige al dashboard si ya está registrado
+    
     res.redirect("http://localhost:5173/dashboard");
   } catch (err) {
-    console.error("❌ Error autenticando ClaveÚnica:", err);
+    console.error("Error autenticando ClaveÚnica:", err);
     res.status(500).json({ ok: false, error: "Error verificando identidad" });
   }
 });
 
+
 router.post("/claveunica/register", async (req, res) => {
   try {
     const { run, name, salario } = req.body;
-    if (!run || !salario) return res.status(400).json({ ok: false, error: "Datos incompletos" });
 
-    const user = await prisma.user.create({
-      data: {
-        run,
-        name,
-        salario: Number(salario),
-      },
-    });
+    if (!run || !salario) {
+      return res.status(400).json({
+        ok: false,
+        error: "Datos incompletos",
+      });
+    }
 
-    res.json({ ok: true, user });
+    const result = await pool.query(
+      `INSERT INTO usuarios (rut, name, salario)
+       VALUES ($1, $2, $3)
+       RETURNING id, rut, name, salario`,
+      [run, name, Number(salario)]
+    );
+
+    res.json({ ok: true, user: result.rows[0] });
   } catch (err) {
-    console.error("❌ Error registrando usuario ClaveÚnica:", err);
+    console.error("Error registrando usuario ClaveÚnica:", err);
     res.status(500).json({ ok: false });
   }
 });

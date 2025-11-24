@@ -5,7 +5,7 @@ import User from './pages/User'
 import Simulator from './pages/Simulator'
 import StatusBadge from './components/StatusBadge'
 
-// 👇 NUEVO: importa las páginas de auth
+
 import Register from './pages/Register'
 import Login from './pages/Login'
 

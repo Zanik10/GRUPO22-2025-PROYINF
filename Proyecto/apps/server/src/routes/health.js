@@ -1,15 +1,15 @@
 import { Router } from "express";
-import pkg from "@prisma/client";
-const { PrismaClient } = pkg;
+import { pool } from "../db.js";
 
-const prisma = new PrismaClient();
 const router = Router();
 
 router.get("/health/db", async (_req, res) => {
   try {
-    await prisma.$queryRaw`SELECT 1`;
+    // Consulta mínima para comprobar conexión a la BD
+    await pool.query("SELECT 1");
     res.json({ ok: true });
   } catch (e) {
+    console.error(e);
     res.status(500).json({ ok: false, error: String(e) });
   }
 });
