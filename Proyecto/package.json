@@ -1,13 +1,10 @@
 {
   "name": "prestamos-app",
+  "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "apps/*"
-  ],
   "scripts": {
-    "dev": "concurrently -n API,WEB,DESK -c green,magenta,yellow \"pnpm -C apps/server dev\" \"pnpm -C apps/client dev\" \"pnpm -C apps/desktop dev\"",
-    "build": "pnpm -C apps/client build && pnpm -C apps/server build && pnpm -C apps/desktop build",
-    "start": "pnpm -C apps/server start & pnpm -C apps/desktop start",
+    "dev": "echo \"Ejecuta client y server por separado\"",
+    "build": "echo \"Build manual en apps/client y apps/server\"",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down"
   },

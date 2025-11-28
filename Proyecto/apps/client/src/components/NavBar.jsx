@@ -1,21 +1,52 @@
-import { NavLink } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
-const linkStyle = ({ isActive }) => ({
-    padding: '8px 10px',
+export default function NavBar({ user, onLogout }) {
+  const location = useLocation()
+
+  const linkStyle = (path) => ({
+    padding: '6px 10px',
     borderRadius: 8,
     textDecoration: 'none',
-    color: isActive ? '#0f172a' : '#e2e8f0',
-    background: isActive ? '#e2e8f0' : 'transparent',
-    fontWeight: 600
-})
+    fontSize: 14,
+    color: location.pathname === path ? '#e5e7eb' : '#cbd5f5',
+    background: location.pathname === path ? '#1f2937' : 'transparent',
+  })
 
-export default function NavBar() {
-    return (
-        <nav style={{ display:'flex', gap:8 }}>
-        <NavLink to="/" style={linkStyle}>Inicio</NavLink>
-        <NavLink to="/usuario" style={linkStyle}>Login</NavLink>
-        <NavLink to="/register" style={linkStyle}>Registro</NavLink>
-        <NavLink to="/simulador" style={linkStyle}>Simulador</NavLink>
-        </nav>
-    )
+  return (
+    <nav style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <Link to="/" style={linkStyle('/')}>Dashboard</Link>
+      <Link to="/usuario" style={linkStyle('/usuario')}>Usuario</Link>
+      <Link to="/simulador" style={linkStyle('/simulador')}>Simulador</Link>
+
+      <div style={{ marginLeft: 16, borderLeft: '1px solid #334155', paddingLeft: 12, display:'flex', gap:8, alignItems:'center' }}>
+        {user ? (
+          <>
+            <span style={{ fontSize: 13, color: '#e5e7eb' }}>
+              {user.email}
+            </span>
+            <button
+              type="button"
+              onClick={onLogout}
+              style={{
+                padding: '4px 10px',
+                fontSize: 13,
+                borderRadius: 999,
+                border: '1px solid #e5e7eb',
+                background: 'transparent',
+                color: '#e5e7eb',
+                cursor: 'pointer'
+              }}
+            >
+              Salir
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" style={linkStyle('/login')}>Login</Link>
+            <Link to="/register" style={linkStyle('/register')}>Registro</Link>
+          </>
+        )}
+      </div>
+    </nav>
+  )
 }

@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import health from "./routes/health.js";
 import authRoutes from "./routes/auth.js";
 import accountRoutes from "./routes/accounts.js";
+import simulationsRouter from './routes/simulations.js'
+import loansRouter from './routes/loans.js'
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ app.use(cors({
 app.use("/api", health);
 app.use("/api/auth", authRoutes);
 app.use("/api/accounts", accountRoutes);
+app.use('/api/simulations', simulationsRouter);
+app.use('/api/loans', loansRouter)
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
@@ -27,3 +31,5 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`API escuchando en http://localhost:${PORT}`);
 });
+
+console.log("Conectando a base:", process.env.DATABASE_URL);

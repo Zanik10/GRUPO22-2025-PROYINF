@@ -2,7 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import argon2 from "argon2";
 import { pool } from "../db.js";
-import { signJWT } from "../helpers/auth.js";
+import { signJWT, authGuard } from "../helpers/auth.js";
 
 const router = Router();
 
@@ -24,6 +24,7 @@ router.post("/register", async (req, res) => {
     const { email, password, fullName } = p.data;
 
     // 1. Verificar si el usuario ya existe
+    console.log("POOL EN AUTH:", pool.options);
     const exists = await pool.query(
       "SELECT id FROM usuarios WHERE email = $1",
       [email]
@@ -40,20 +41,28 @@ router.post("/register", async (req, res) => {
     try {
       await client.query("BEGIN");
 
-      // Crear usuario
+      
       const userResult = await client.query(
-        `INSERT INTO usuarios (email, password_hash, full_name)
-         VALUES ($1, $2, $3)
-         RETURNING id, email`,
-        [email, passwordHash, fullName || null]
+        `INSERT INTO usuarios (email, password_hash, full_name, rut, name, salario, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6, NOW())
+        RETURNING id, email`,
+        [
+          email,
+          passwordHash,
+          fullName || null,
+          "",      // rut vacío por ahora
+          "",      // name vacío por ahora
+          0        // salario por defecto
+        ]
       );
+
 
       const user = userResult.rows[0];
 
       // Crear cuenta por defecto
       await client.query(
         `INSERT INTO cuentas (usuario_id, tipo, currency, saldo)
-         VALUES ($1, 'CHECKING', 'CLP', 0)`,
+        VALUES ($1, 'CHECKING', 'CLP', 0)`,
         [user.id]
       );
 
@@ -72,8 +81,13 @@ router.post("/register", async (req, res) => {
 
     } catch (err) {
       await client.query("ROLLBACK");
-      console.error(err);
-      return res.status(500).json({ error: "Error interno" });
+      console.error("Error en registro:", err);  // ya lo tienes
+      return res.status(500).json({
+        error: "Error interno",
+        dbMessage: err.message,
+        detail: err.detail,
+        code: err.code,
+      });
     } finally {
       client.release();
     }
@@ -140,5 +154,11 @@ router.post("/login", async (req, res) => {
 router.post("/logout", (_req, res) => {
   res.clearCookie("token").json({ ok: true });
 });
+
+router.get("/me", authGuard, async (req, res) => {
+  const { id, email } = req.user;
+  res.json({ id, email });
+});
+
 
 export default router;
