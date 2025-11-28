@@ -207,11 +207,7 @@ export default function Simulator() {
         </table>
       </div>
 
-      <p style={{ color: "#64748b", textAlign: "center" }}>
-        Mostrando hasta 120 filas por simplicidad. (Luego lo podemos
-        paginar/exportar.)
-      </p>
-
+    
       {/* historial guardado en BD */}
       <section style={{ marginTop: 32 }}>
         <h3>Historial de simulaciones</h3>
