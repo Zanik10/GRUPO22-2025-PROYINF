@@ -7,7 +7,7 @@ const router = Router();
 
 router.get("/me", authGuard, async (req, res) => {
   try {
-    const userId = req.user.sub; // viene del token (signJWT en auth.js)
+    const userId = req.user.sub; 
 
     // 1) Traer cuentas del usuario
     const accountsResult = await pool.query(

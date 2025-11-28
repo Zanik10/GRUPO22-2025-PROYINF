@@ -14,16 +14,32 @@ export default function NavBar({ user, onLogout }) {
 
   return (
     <nav style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      {/* Links principales */}
       <Link to="/" style={linkStyle('/')}>Dashboard</Link>
-      <Link to="/usuario" style={linkStyle('/usuario')}>Usuario</Link>
       <Link to="/simulador" style={linkStyle('/simulador')}>Simulador</Link>
+      <Link to="/solicitudes" style={linkStyle('/solicitudes')}>Solicitudes</Link>
 
-      <div style={{ marginLeft: 16, borderLeft: '1px solid #334155', paddingLeft: 12, display:'flex', gap:8, alignItems:'center' }}>
+      {/* Separador y zona derecha */}
+      <div style={{
+        marginLeft: 16,
+        borderLeft: '1px solid #334155',
+        paddingLeft: 12,
+        display: 'flex',
+        gap: 8,
+        alignItems: 'center'
+      }}>
         {user ? (
           <>
             <span style={{ fontSize: 13, color: '#e5e7eb' }}>
               {user.email}
             </span>
+
+            {/* Link a Mi perfil */}
+            <Link to="/perfil" style={linkStyle('/perfil')}>
+              Mi perfil
+            </Link>
+
+            {/* Botón salir */}
             <button
               type="button"
               onClick={onLogout}

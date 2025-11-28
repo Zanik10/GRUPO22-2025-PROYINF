@@ -1,4 +1,4 @@
-// src/App.jsx
+
 import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
@@ -10,6 +10,10 @@ import StatusBadge from './components/StatusBadge'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import { api } from './utils/api'
+import Loans from "./pages/Loans"
+import LoanDetail from './pages/LoanDetail'
+import Profile from './pages/Profile'
+
 
 export default function App() {
   const [auth, setAuth] = useState({ status: 'loading', user: null })
@@ -87,7 +91,7 @@ export default function App() {
         boxSizing: 'border-box'
       }}>
         <Routes>
-          {/* Si hay usuario → Dashboard, si no → Login */}
+          
           <Route
             path="/"
             element={
@@ -108,10 +112,29 @@ export default function App() {
               auth.user ? <Simulator /> : <Navigate to="/login" replace />
             }
           />
+          <Route
+            path="/simulador"
+            element={
+              auth.user ? <Simulator /> : <Navigate to="/login" replace />
+            }
+          />
+          <Route
+            path="/solicitudes"
+            element={
+              auth.user ? <Loans /> : <Navigate to="/login" replace />
+            }
+          />
+          <Route
+            path="/solicitudes/:id"
+            element={
+              auth.user ? <LoanDetail /> : <Navigate to="/login" replace />
+            }
+          />
 
           {/* Auth */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/perfil" element={<Profile />} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />

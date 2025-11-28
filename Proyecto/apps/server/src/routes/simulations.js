@@ -1,4 +1,4 @@
-// apps/server/src/routes/simulations.js
+
 import { Router } from 'express'
 import { pool } from '../db.js'
 import { authGuard } from '../helpers/auth.js'
@@ -35,7 +35,7 @@ function computeSimulation(monto, tasaAnual, plazoMeses) {
 // Todas las rutas de este router requieren usuario logeado
 router.use(authGuard)
 
-// POST /api/simulations
+
 router.post('/', async (req, res) => {
   try {
     const { monto, tasaAnual, plazoMeses } = req.body || {}

@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import accountRoutes from "./routes/accounts.js";
 import simulationsRouter from './routes/simulations.js'
 import loansRouter from './routes/loans.js'
+import profileRouter from './routes/profile.js';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/accounts", accountRoutes);
 app.use('/api/simulations', simulationsRouter);
 app.use('/api/loans', loansRouter)
+app.use('/api/profile', profileRouter);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 

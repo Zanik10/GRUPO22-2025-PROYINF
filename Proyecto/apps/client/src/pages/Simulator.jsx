@@ -59,7 +59,7 @@ export default function Simulator() {
     }
   };
 
-    // Solicitar préstamo a partir de una simulación guardada
+    
   const solicitarPrestamo = async (simId) => {
     try {
       await api("/api/loans/request", {

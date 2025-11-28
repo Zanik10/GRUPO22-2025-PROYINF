@@ -1,31 +1,59 @@
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { api } from "../utils/api";
 
-export default function Register() {
-  const [params] = useSearchParams();
+const CARD_BG = "#1e293b";
+const CARD_BORDER = "#334155";
+const TEXT_MAIN = "#e2e8f0";
+const TEXT_SECONDARY = "#94a3b8";
+
+export default function Profile() {
   const [form, setForm] = useState({
     fullName: "",
     email: "",
-    password: "",
     salario: "",
     tieneDeuda: false,
     antiguedadLaboralMeses: "",
   });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState(null);
   const [error, setError] = useState(null);
 
-  const isClaveUnica = !!params.get("run");
-
   useEffect(() => {
-    if (isClaveUnica) {
-      setForm((f) => ({
-        ...f,
-        fullName: params.get("name") || "",
-      }));
-    }
-  }, [isClaveUnica, params]);
+    let alive = true;
+    setLoading(true);
+    setError(null);
+
+    api("/api/profile")
+      .then((data) => {
+        if (!alive) return;
+        const u = data.user || data;
+        setForm({
+          fullName: u.fullName || "",
+          email: u.email || "",
+          salario: u.salario ?? "",
+          tieneDeuda: !!u.tieneDeuda,
+          antiguedadLaboralMeses:
+            u.antiguedadLaboralMeses != null
+              ? u.antiguedadLaboralMeses
+              : "",
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        if (!alive) return;
+        setError("Error al cargar perfil.");
+      })
+      .finally(() => {
+        if (!alive) return;
+        setLoading(false);
+      });
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -37,56 +65,67 @@ export default function Register() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
     setMsg(null);
     setError(null);
 
     try {
-      
-      await api("/api/auth/register", {
-        method: "POST",
-        body: {
-          fullName: form.fullName,
-          email: form.email,
-          password: form.password,
-          salario: form.salario,                      
-          tieneDeuda: form.tieneDeuda,                 
-          antiguedadLaboralMeses: form.antiguedadLaboralMeses, 
-        },
+      const body = {
+        salario: form.salario,
+        tieneDeuda: form.tieneDeuda,
+        antiguedadLaboralMeses: form.antiguedadLaboralMeses,
+      };
+
+      const data = await api("/api/profile", {
+        method: "PUT",
+        body,
       });
 
-      setMsg("Registro exitoso. Ya puedes usar el simulador y solicitar préstamos.");
+      const u = data.user || data;
+      setForm((prev) => ({
+        ...prev,
+        salario: u.salario ?? "",
+        tieneDeuda: !!u.tieneDeuda,
+        antiguedadLaboralMeses: u.antiguedadLaboralMeses ?? "",
+      }));
+
+      setMsg("Perfil actualizado correctamente.");
     } catch (err) {
       console.error(err);
-      setError("Error al registrar usuario.");
+      setError("Error al actualizar perfil.");
+    } finally {
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div style={{ padding: 24, color: TEXT_MAIN }}>Cargando perfil...</div>
+    );
+  }
 
   return (
     <section
       style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#0f172a",
-        color: "#e2e8f0",
+        padding: 24,
+        maxWidth: 600,
+        margin: "0 auto",
+        color: TEXT_MAIN,
       }}
     >
+      <h2 style={{ marginBottom: 12 }}>Mi perfil</h2>
+
       <form
         onSubmit={onSubmit}
         style={{
-          width: "100%",
-          maxWidth: 420,
-          background: "#1e293b",
+          backgroundColor: CARD_BG,
           borderRadius: 12,
-          padding: 24,
-          border: "1px solid #334155",
+          border: `1px solid ${CARD_BORDER}`,
+          padding: 20,
           display: "grid",
           gap: 12,
         }}
       >
-        <h2 style={{ margin: 0, marginBottom: 8 }}>Crear cuenta</h2>
-
         {msg && (
           <div
             style={{
@@ -117,35 +156,11 @@ export default function Register() {
         )}
 
         <Field label="Nombre completo">
-          <input
-            name="fullName"
-            value={form.fullName}
-            onChange={onChange}
-            required
-            style={inputStyle}
-          />
+          <input value={form.fullName} disabled style={inputDisabled} />
         </Field>
 
         <Field label="Email">
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={onChange}
-            required
-            style={inputStyle}
-          />
-        </Field>
-
-        <Field label="Contraseña">
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={onChange}
-            required
-            style={inputStyle}
-          />
+          <input value={form.email} disabled style={inputDisabled} />
         </Field>
 
         <Field label="Salario mensual (CLP)">
@@ -156,8 +171,7 @@ export default function Register() {
             onChange={onChange}
             min="0"
             step="1000"
-            required
-            style={inputStyle}
+            style={input}
           />
         </Field>
 
@@ -178,9 +192,6 @@ export default function Register() {
             />
             <span>Sí, tengo otras deudas</span>
           </label>
-          <div style={{ fontSize: 11, color: "#94a3b8" }}>
-            Esta información se usa solo para estimar el riesgo crediticio.
-          </div>
         </Field>
 
         <Field label="Antigüedad laboral (en meses)">
@@ -191,15 +202,13 @@ export default function Register() {
             onChange={onChange}
             min="0"
             step="1"
-            style={inputStyle}
+            style={input}
           />
-          <div style={{ fontSize: 11, color: "#94a3b8" }}>
-            Ej: 6 meses, 12 meses, 36 meses, etc.
-          </div>
         </Field>
 
         <button
           type="submit"
+          disabled={saving}
           style={{
             marginTop: 8,
             padding: "10px 16px",
@@ -208,10 +217,11 @@ export default function Register() {
             background: "#93c5fd",
             color: "#0f172a",
             fontWeight: 600,
-            cursor: "pointer",
+            cursor: saving ? "wait" : "pointer",
+            opacity: saving ? 0.8 : 1,
           }}
         >
-          Registrarme
+          {saving ? "Guardando..." : "Guardar cambios"}
         </button>
       </form>
     </section>
@@ -227,11 +237,16 @@ function Field({ label, children }) {
   );
 }
 
-const inputStyle = {
+const input = {
   borderRadius: 8,
   border: "1px solid #334155",
   padding: "8px 10px",
   background: "#0f172a",
-  color: "#e2e8f0",
+  color: TEXT_MAIN,
   fontSize: 14,
+};
+
+const inputDisabled = {
+  ...input,
+  opacity: 0.7,
 };

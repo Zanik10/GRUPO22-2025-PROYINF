@@ -1,4 +1,4 @@
-//calculo no definitivo
+
 export function monthlyPayment(monto, tasaAnualPercent, meses) {
   const r = (tasaAnualPercent / 100) / 12
   if (r === 0) return monto / meses
